@@ -176,9 +176,55 @@ int main(int argc, char** argv) {
 			req_file_path = final_file_path; //will need to malloc if we make it a separate func
 			printf("GOOD RESPONSE TO BE SENT\n");
 			printf("HTTP/1.0 200 OK\nContent-Type:\n");
-			char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:text/html\r\n\r\n";
+			char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:texttt/html\r\n\r\n";
 			//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
+			//n = write(newsockfd, res1, strlen(res1));
+
+			/*mime handling.....................*/
+			//int consecutive_dots = ".."; //for future use
+			char* stopper = ".";
+			char* token;
+			char* final_token;
+			char* copy_req_file_path = (char*) malloc(sizeof(char)* strlen(buffer));
+			assert(copy_req_file_path);
+			strcpy(copy_req_file_path, req_file_path);
+
+			/* get the first token */
+			token = strtok(copy_req_file_path, stopper);
+			//printf("token= %s\n", token);
+			/* walk through other tokens */
+
+			while( token != NULL ) {
+				printf( " token= %s\n", token );
+				final_token = token;
+				token = strtok(NULL, stopper);
+			}
+			printf("req file path, token = %s , %s\n", req_file_path, final_token);
+			printf("final token=%s\n", final_token);
+			if ((strcmp(final_token, "html") == 0)) {
+			  printf("EQUAL\n");
+     		 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
+			  printf( "%s\n", res1);
+	    		}
+			printf("testt....%s\n", res1);
+
+			if ((strcmp(final_token, "css") == 0)) {
+     		 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
+			  printf("%s\n", res1);
+    			}
+			if ((strcmp(final_token, "js") == 0)) {
+			   printf("EQUAL\n");
+	     		   res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
+			   printf("%s\n", res1);
+    			}
+			if ((strcmp(final_token, "jpg") == 0)) {
+			   printf("EQUAL\n");
+     			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
+			   printf("%s\n", res1);
+	    		}
+
 			n = write(newsockfd, res1, strlen(res1));
+			/*...mime handling end......................*/
 
 			//GOOD TO SEND CONTENT AS WELL
 			//FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
