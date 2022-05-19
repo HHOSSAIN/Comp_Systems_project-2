@@ -29,6 +29,14 @@ int main(int argc, char** argv) {
 	int portno = atoi(argv[2]);
 	char* web_root_dir = argv[3];
 	printf("web root = %s\n", web_root_dir);
+	char* server_file_path = (char*) malloc(sizeof(char)* 200); 
+	assert(server_file_path);
+	sprintf(server_file_path, "%s%s", web_root_dir, "/server.c");
+	printf("server_file_path= %s\n", server_file_path);
+	if (fopen(server_file_path, "r") == NULL) {
+        fprintf(stderr, "wrong web root given");
+		exit(EXIT_FAILURE);	
+	}
 
 	// Create address we're going to listen on (with given port number)
 	memset(&hints, 0, sizeof hints);
@@ -155,6 +163,7 @@ int main(int argc, char** argv) {
 			n = write(newsockfd, res1, strlen(res1));
 
 			//GOOD TO SEND CONTENT AS WELL
+			//FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
 			FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
 			assert(file2);
 			fseek(file2, 0, SEEK_END);
