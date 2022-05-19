@@ -10,6 +10,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h> //hasne
+#include <dirent.h> //hasne
+#include <errno.h> //hasne
 
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
@@ -29,14 +31,23 @@ int main(int argc, char** argv) {
 	int portno = atoi(argv[2]);
 	char* web_root_dir = argv[3];
 	printf("web root = %s\n", web_root_dir);
-	char* server_file_path = (char*) malloc(sizeof(char)* 200); 
+	DIR* dir = opendir(web_root_dir);
+	if (dir) {
+    	/* Directory exists. */
+    	closedir(dir);
+	}
+	else if (ENOENT == errno) {
+		fprintf(stderr, "wrong web root given");
+		exit(EXIT_FAILURE);	
+	}
+	/*char* server_file_path = (char*) malloc(sizeof(char)* 200); 
 	assert(server_file_path);
 	sprintf(server_file_path, "%s%s", web_root_dir, "/server.c");
 	printf("server_file_path= %s\n", server_file_path);
 	if (fopen(server_file_path, "r") == NULL) {
         fprintf(stderr, "wrong web root given");
 		exit(EXIT_FAILURE);	
-	}
+	} */
 
 	// Create address we're going to listen on (with given port number)
 	memset(&hints, 0, sizeof hints);
