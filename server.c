@@ -193,6 +193,7 @@ int main(int argc, char** argv) {
 
 			fread(buffer2, len, sizeof(unsigned char), file2);
 			int n2 = write(newsockfd, buffer2, len);
+			close(newsockfd);
 			//write(newsockfd, buffer2, len);
 		}
 
@@ -201,12 +202,12 @@ int main(int argc, char** argv) {
 
 
 		// Write message back
-		printf("Here is the message: %s\n", buffer);
+		/*printf("Here is the message: %s\n", buffer);
 		n = write(newsockfd, "I got your message", 18);
 		if (n < 0) {
 			perror("write");
 			exit(EXIT_FAILURE);
-		}
+		}*/
 	}
 	close(sockfd);
 	close(newsockfd);
