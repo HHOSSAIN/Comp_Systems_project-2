@@ -206,23 +206,27 @@ int main(int argc, char** argv) {
      		 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
 			  printf( "%s\n", res1);
 	    		}
-			printf("testt....%s\n", res1);
+			//printf("testt....%s\n", res1);
 
-			if ((strcmp(final_token, "css") == 0)) {
+			else if ((strcmp(final_token, "css") == 0)) {
      		 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
 			  printf("%s\n", res1);
     			}
-			if ((strcmp(final_token, "js") == 0)) {
+			else if ((strcmp(final_token, "js") == 0)) {
 			   printf("EQUAL\n");
 	     		   res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
 			   printf("%s\n", res1);
     			}
-			if ((strcmp(final_token, "jpg") == 0)) {
+			else if ((strcmp(final_token, "jpg") == 0)) {
 			   printf("EQUAL\n");
      			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
 			   printf("%s\n", res1);
 	    		}
-
+			else{
+			   printf("EQUAL\n");
+     		 	   res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
+			   printf("%s\n", res1);
+	    		}
 			n = write(newsockfd, res1, strlen(res1));
 			/*...mime handling end......................*/
 
