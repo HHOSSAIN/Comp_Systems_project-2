@@ -31,6 +31,15 @@ int main(int argc, char** argv) {
 	int portno = atoi(argv[2]);
 	char* web_root_dir = argv[3];
 	printf("web root = %s\n", web_root_dir);
+
+	//ask if it makes sense
+	for(int i=0; i<strlen(web_root_dir); i++){
+		if(web_root_dir[i] == '.'){
+			fprintf(stderr, "wrong web root given");
+			exit(EXIT_FAILURE);	
+		}
+	}
+
 	DIR* dir = opendir(web_root_dir);
 	if (dir) {
     	/* Directory exists. */
