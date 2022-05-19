@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
 			req_file_path = final_file_path; //will need to malloc if we make it a separate func
 			printf("GOOD RESPONSE TO BE SENT\n");
 			printf("HTTP/1.0 200 OK\nContent-Type:\n");
-			char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:\r\n";
+			char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:\r\n\r\n";
 			//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
 			n = write(newsockfd, res1, strlen(res1));
 
