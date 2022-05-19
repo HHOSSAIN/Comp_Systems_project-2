@@ -33,11 +33,36 @@ int main(int argc, char** argv) {
 	printf("web root = %s\n", web_root_dir);
 
 	//ask if it makes sense
+	int consecutive_dots=0;
+	int single_dot = 0;
 	for(int i=0; i<strlen(web_root_dir); i++){
 		if(web_root_dir[i] == '.'){
+			single_dot = 1;
+			consecutive_dots += 1;
+			if(consecutive_dots == 2){
+				single_dot = 0;
+			}
+			if(consecutive_dots > 2){
+				fprintf(stderr, "wrong web root given 1");
+				exit(EXIT_FAILURE);	
+			}
+			else{
+				continue;
+			}
+		}
+		else{
+			//consecutive_dots -= 1;
+			if(single_dot){
+				fprintf(stderr, "wrong web root given111");
+				exit(EXIT_FAILURE);
+			}
+			consecutive_dots = 0;
+			continue;
+		}
+	}
+	if(single_dot && consecutive_dots==0 ){
 			fprintf(stderr, "wrong web root given");
 			exit(EXIT_FAILURE);	
-		}
 	}
 
 	DIR* dir = opendir(web_root_dir);
@@ -46,7 +71,7 @@ int main(int argc, char** argv) {
     	closedir(dir);
 	}
 	else if (ENOENT == errno) {
-		fprintf(stderr, "wrong web root given");
+		fprintf(stderr, "wrong web root given 2");
 		exit(EXIT_FAILURE);	
 	}
 	/*char* server_file_path = (char*) malloc(sizeof(char)* 200); 
