@@ -104,14 +104,21 @@ int main(int argc, char** argv) {
 	// Accept a connection - blocks until a connection is ready to be accepted
 	// Get back a new file descriptor to communicate on
 	client_addr_size = sizeof client_addr;
-	newsockfd =
+	/*newsockfd =
 		accept(sockfd, (struct sockaddr*)&client_addr, &client_addr_size);
 	if (newsockfd < 0) {
 		perror("accept");
 		exit(EXIT_FAILURE);
-	}
+	} */
 
 	while (1){
+		newsockfd =
+			accept(sockfd, (struct sockaddr*)&client_addr, &client_addr_size);
+		if (newsockfd < 0) {
+			perror("accept");
+			exit(EXIT_FAILURE);
+		}
+
 		// Read characters from the connection, then process
 		n = read(newsockfd, buffer, 255); // n is number of characters read
 		if (n < 0) {
