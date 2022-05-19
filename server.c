@@ -123,7 +123,9 @@ int main(int argc, char** argv) {
 			req_file_path = NULL;
 			printf("BAD REQ RESPONSE TO BE SENT\n");
 			printf("HTTP/1.0 400\n");
-			n = write(newsockfd, "HTTP/1.0 400\n", 18);
+			char* res_bad = "HTTP/1.0 400\r\n";
+			//n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
+			n = write(newsockfd, res_bad, strlen(res_bad));
 		}
 
 		//checking the path
@@ -137,7 +139,9 @@ int main(int argc, char** argv) {
 			req_file_path = NULL;
 			printf("NOT FOUND RESPONSE TO BE SENT\n");
 			printf("HTTP/1.0 404\n");
-			n = write(newsockfd, "HTTP/1.0 404\n", 18);
+			char* res1 = "HTTP/1.0 404\r\n";
+			//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+			n = write(newsockfd, res1, strlen(res1));
 		}
 		else{
 			printf("200: file found!\n");
@@ -146,7 +150,9 @@ int main(int argc, char** argv) {
 			req_file_path = final_file_path; //will need to malloc if we make it a separate func
 			printf("GOOD RESPONSE TO BE SENT\n");
 			printf("HTTP/1.0 200 OK\nContent-Type:\n");
-			n = write(newsockfd, "HTTP/1.0 200 OK\nContent-Type:\n", 18);
+			char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:\r\n";
+			//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
+			n = write(newsockfd, res1, strlen(res1));
 
 			//GOOD TO SEND CONTENT AS WELL
 			FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
