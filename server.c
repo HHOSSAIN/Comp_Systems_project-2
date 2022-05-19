@@ -188,99 +188,127 @@ int main(int argc, char** argv) {
 			n = write(newsockfd, res_bad, strlen(res_bad));
 		}
 
-		//checking the path
-		//var to use -> final_file_path
-		FILE* file;
-		file = fopen(final_file_path, "r");
-		if(file == NULL){
-			printf("404: not found\n");
-			//return 404;
-			response_req_code = 404;
-			req_file_path = NULL;
-			printf("NOT FOUND RESPONSE TO BE SENT\n");
-			printf("HTTP/1.0 404\n");
-			char* res1 = "HTTP/1.0 404\r\n";
-			//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-			n = write(newsockfd, res1, strlen(res1));
-		}
-		else{
-			printf("200: file found!\n");
-			//return 200;
-			response_req_code = 200;
-			req_file_path = final_file_path; //will need to malloc if we make it a separate func
-			printf("GOOD RESPONSE TO BE SENT\n");
-			printf("HTTP/1.0 200 OK\nContent-Type:\n");
-			char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:texttt/html\r\n\r\n";
-			//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
-			//n = write(newsockfd, res1, strlen(res1));
-
-			/*mime handling.....................*/
-			//int consecutive_dots = ".."; //for future use
-			char* stopper = ".";
-			char* token;
-			char* final_token;
-			char* copy_req_file_path = (char*) malloc(sizeof(char)* strlen(buffer));
-			assert(copy_req_file_path);
-			strcpy(copy_req_file_path, req_file_path);
-
-			/* get the first token */
-			token = strtok(copy_req_file_path, stopper);
-			//printf("token= %s\n", token);
-			/* walk through other tokens */
-
-			while( token != NULL ) {
-				printf( " token= %s\n", token );
-				final_token = token;
-				token = strtok(NULL, stopper);
+		int req_single_dot = 0;
+		int req_consecutive_dots = 0;
+		printf("tmp path in loop = %s\n", tmp_path);
+		for(int i=0; i<strlen(tmp_path); i++){
+			if(tmp_path[i] == '.'){
+				req_single_dot = 1;
+				req_consecutive_dots += 1;
+				if(req_consecutive_dots == 2){
+					//single_dot = 0;
+					printf("404: not founddddddd\n");
+					//return 404;
+					response_req_code = 404;
+					req_file_path = NULL;
+					printf("NOT FOUND RESPONSE TO BE SENT\n");
+					printf("HTTP/1.0 404\n");
+					char* res1 = "HTTP/1.0 404\r\n";
+					//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+					n = write(newsockfd, res1, strlen(res1));
+					close(newsockfd);
+					break;
+				}
+				continue;
 			}
-			printf("req file path, token = %s , %s\n", req_file_path, final_token);
-			printf("final token=%s\n", final_token);
-			if ((strcmp(final_token, "html") == 0)) {
-			  printf("EQUAL\n");
-     		 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
-			  printf( "%s\n", res1);
-	    		}
-			//printf("testt....%s\n", res1);
-
-			else if ((strcmp(final_token, "css") == 0)) {
-     		 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
-			  printf("%s\n", res1);
-    			}
-			else if ((strcmp(final_token, "js") == 0)) {
-			   printf("EQUAL\n");
-	     		   res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
-			   printf("%s\n", res1);
-    			}
-			else if ((strcmp(final_token, "jpg") == 0)) {
-			   printf("EQUAL\n");
-     			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
-			   printf("%s\n", res1);
-	    		}
-			else{
-			   printf("EQUAL\n");
-     		 	   res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
-			   printf("%s\n", res1);
-	    		}
-			n = write(newsockfd, res1, strlen(res1));
-			/*...mime handling end......................*/
-
-			//GOOD TO SEND CONTENT AS WELL
-			//FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
-			FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
-			assert(file2);
-			fseek(file2, 0, SEEK_END);
-			int len = ftell(file2);
-			//changing file pointer back to start to be able to copy it to buffer
-			fseek(file2, 0, SEEK_SET);
-			unsigned char* buffer2 = (unsigned char*) malloc(len + 1);
-			assert(buffer2);
-
-			fread(buffer2, len, sizeof(unsigned char), file2);
-			int n2 = write(newsockfd, buffer2, len);
-			close(newsockfd);
-			//write(newsockfd, buffer2, len);
+			continue;
 		}
 
+		if(response_req_code != 404){
+			//checking the path
+			//var to use -> final_file_path
+			FILE* file;
+			file = fopen(final_file_path, "r");
+			if(file == NULL){
+				printf("404: not found\n");
+				//return 404;
+				response_req_code = 404;
+				req_file_path = NULL;
+				printf("NOT FOUND RESPONSE TO BE SENT\n");
+				printf("HTTP/1.0 404\n");
+				char* res1 = "HTTP/1.0 404\r\n";
+				//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+				n = write(newsockfd, res1, strlen(res1));
+			}
+			else{
+				printf("200: file found!\n");
+				//return 200;
+				response_req_code = 200;
+				req_file_path = final_file_path; //will need to malloc if we make it a separate func
+				printf("GOOD RESPONSE TO BE SENT\n");
+				printf("HTTP/1.0 200 OK\nContent-Type:\n");
+				char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:texttt/html\r\n\r\n";
+				//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
+				//n = write(newsockfd, res1, strlen(res1));
+
+				/*mime handling.....................*/
+				//int consecutive_dots = ".."; //for future use
+				char* stopper = ".";
+				char* token;
+				char* final_token;
+				char* copy_req_file_path = (char*) malloc(sizeof(char)* strlen(buffer));
+				assert(copy_req_file_path);
+				strcpy(copy_req_file_path, req_file_path);
+
+				/* get the first token */
+				token = strtok(copy_req_file_path, stopper);
+				//printf("token= %s\n", token);
+				/* walk through other tokens */
+
+				while( token != NULL ) {
+					printf( " token= %s\n", token );
+					final_token = token;
+					token = strtok(NULL, stopper);
+				}
+				printf("req file path, token = %s , %s\n", req_file_path, final_token);
+				printf("final token=%s\n", final_token);
+				if ((strcmp(final_token, "html") == 0)) {
+				  printf("EQUAL\n");
+     			 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
+				  printf( "%s\n", res1);
+	    			}
+				//printf("testt....%s\n", res1);
+
+				else if ((strcmp(final_token, "css") == 0)) {
+     			 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
+				  printf("%s\n", res1);
+	    			}
+				else if ((strcmp(final_token, "js") == 0)) {
+				   printf("EQUAL\n");
+	     			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
+				   printf("%s\n", res1);
+    				}
+				else if ((strcmp(final_token, "jpg") == 0)) {
+				   printf("EQUAL\n");
+	     			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
+				   printf("%s\n", res1);
+	    			}
+				else{
+				   printf("EQUAL\n");
+     			 	   res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
+				   printf("%s\n", res1);
+	    			}
+				n = write(newsockfd, res1, strlen(res1));
+				/*...mime handling end......................*/
+
+				//GOOD TO SEND CONTENT AS WELL
+				//FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
+				FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
+				assert(file2);
+				fseek(file2, 0, SEEK_END);
+				int len = ftell(file2);
+				//changing file pointer back to start to be able to copy it to buffer
+				fseek(file2, 0, SEEK_SET);
+				unsigned char* buffer2 = (unsigned char*) malloc(len + 1);
+				assert(buffer2);
+
+				fread(buffer2, len, sizeof(unsigned char), file2);
+				int n2 = write(newsockfd, buffer2, len);
+				close(newsockfd);
+				//write(newsockfd, buffer2, len);
+			}
+
+		}
 		//preparing a response
 		//char* response;
 
