@@ -13,6 +13,8 @@
 #include <dirent.h> //hasne
 #include <errno.h> //hasne
 
+#define IMPLEMENTS_IPV6
+
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
 	char buffer[256];
@@ -174,7 +176,7 @@ int main(int argc, char** argv) {
 		assert(final_file_path);
 		sprintf(final_file_path, "%s%s", web_root_dir, tmp_path);
 
-		int response_req_code; //bad=400, not_found=404, ok=200
+		int response_req_code = 0; //bad=400, not_found=404, ok=200
 		char* req_file_path; //learn where to use it
 
 		//wrong type of request sent
@@ -186,32 +188,35 @@ int main(int argc, char** argv) {
 			char* res_bad = "HTTP/1.0 400\r\n";
 			//n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
 			n = write(newsockfd, res_bad, strlen(res_bad));
+			close(newsockfd);
 		}
 
 		int req_single_dot = 0;
 		int req_consecutive_dots = 0;
 		printf("tmp path in loop = %s\n", tmp_path);
-		for(int i=0; i<strlen(tmp_path); i++){
-			if(tmp_path[i] == '.'){
-				req_single_dot = 1;
-				req_consecutive_dots += 1;
-				if(req_consecutive_dots == 2){
-					//single_dot = 0;
-					printf("404: not founddddddd\n");
-					//return 404;
-					response_req_code = 404;
-					req_file_path = NULL;
-					printf("NOT FOUND RESPONSE TO BE SENT\n");
-					printf("HTTP/1.0 404\n");
-					char* res1 = "HTTP/1.0 404\r\n";
-					//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-					n = write(newsockfd, res1, strlen(res1));
-					close(newsockfd);
-					break;
+		if(response_req_code != 0){
+			for(int i=0; i<strlen(tmp_path); i++){
+				if(tmp_path[i] == '.'){
+					req_single_dot = 1;
+					req_consecutive_dots += 1;
+					if(req_consecutive_dots == 2){
+						//single_dot = 0;
+						printf("404: not founddddddd\n");
+						//return 404;
+						response_req_code = 404;
+						req_file_path = NULL;
+						printf("NOT FOUND RESPONSE TO BE SENT\n");
+						printf("HTTP/1.0 404\n");
+						char* res1 = "HTTP/1.0 404\r\n";
+						//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+						n = write(newsockfd, res1, strlen(res1));
+						close(newsockfd);
+						break;
+					}
+					continue;
 				}
 				continue;
 			}
-			continue;
 		}
 
 		if(response_req_code != 404){
