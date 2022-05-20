@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
 			req_file_path = NULL;
 			printf("BAD REQ RESPONSE TO BE SENT\n");
 			printf("HTTP/1.0 400\n");
-			char* res_bad = "HTTP/1.0 400\r\n";
+			char* res_bad = "HTTP/1.0 400\r\n\r\n";
 			//n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
 			n = write(newsockfd, res_bad, strlen(res_bad));
 			close(newsockfd);
@@ -210,7 +210,7 @@ int main(int argc, char** argv) {
 						req_file_path = NULL;
 						printf("NOT FOUND RESPONSE TO BE SENT\n");
 						printf("HTTP/1.0 404\n");
-						char* res1 = "HTTP/1.0 404\r\n";
+						char* res1 = "HTTP/1.0 404\r\n\r\n";
 						//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
 						n = write(newsockfd, res1, strlen(res1));
 						close(newsockfd);
@@ -234,7 +234,7 @@ int main(int argc, char** argv) {
 				req_file_path = NULL;
 				printf("NOT FOUND RESPONSE TO BE SENT\n");
 				printf("HTTP/1.0 404\n");
-				char* res1 = "HTTP/1.0 404\r\n";
+				char* res1 = "HTTP/1.0 404\r\n\r\n";
 				//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
 				n = write(newsockfd, res1, strlen(res1));
 			}
