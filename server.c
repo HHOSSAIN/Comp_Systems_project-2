@@ -1,3 +1,4 @@
+
 // A simple server in the internet domain using TCP
 // The port number is passed as an argument
 // To compile: gcc server.c -o server
@@ -163,6 +164,7 @@ int main(int argc, char** argv) {
 		}
 		// Null-terminate string
 		buffer[n] = '\0';
+		printf("buffer = %s\n", buffer);
 
 		char* tmp_path = (char*) malloc(sizeof(char) * strlen(buffer));
 		char primitive[4];
@@ -194,11 +196,12 @@ int main(int argc, char** argv) {
 		int req_single_dot = 0;
 		int req_consecutive_dots = 0;
 		printf("tmp path in loop = %s\n", tmp_path);
-		if(response_req_code != 0){
+		if(response_req_code == 0){
 			for(int i=0; i<strlen(tmp_path); i++){
 				if(tmp_path[i] == '.'){
 					req_single_dot = 1;
 					req_consecutive_dots += 1;
+					printf("req_cons_dots= %d\n", req_consecutive_dots);
 					if(req_consecutive_dots == 2){
 						//single_dot = 0;
 						printf("404: not founddddddd\n");
@@ -219,7 +222,7 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		if(response_req_code != 404){
+		if(response_req_code == 0){
 			//checking the path
 			//var to use -> final_file_path
 			FILE* file;
