@@ -38,15 +38,19 @@ int main(int argc, char** argv) {
 	//ask if it makes sense
 	int consecutive_dots=0;
 	int single_dot = 0;
-	for(int i=0; i<strlen(web_root_dir); i++){
+	for(int i=0; i<strlen(web_root_dir); i++){ //try strtok instead
+		if(web_root_dir[i] == '/'){
+			printf("i=%c\n", web_root_dir[i]);
+		}
 		if(web_root_dir[i] == '.'){
 			single_dot = 1;
 			consecutive_dots += 1;
 			if(consecutive_dots == 2){
 				single_dot = 0;
+				printf("eee....single dot is 0!!\n");
 			}
-			if(consecutive_dots > 2){
-				fprintf(stderr, "wrong web root given 1");
+			else if(consecutive_dots > 2){
+				fprintf(stderr, "wrong web root given 1\n");
 				exit(EXIT_FAILURE);	
 			}
 			else{
@@ -55,18 +59,22 @@ int main(int argc, char** argv) {
 		}
 		else{
 			//consecutive_dots -= 1;
-			if(single_dot){
+			//if(single_dot){
+			if( (single_dot==1) && (web_root_dir[i] != '/') ){
+				printf("char= %c\n", web_root_dir[i]);
 				fprintf(stderr, "wrong web root given111");
 				exit(EXIT_FAILURE);
 			}
+			//printf("didn't exit yet\n");
 			consecutive_dots = 0;
+			single_dot = 0;
 			continue;
 		}
 	}
-	if(single_dot && consecutive_dots==0 ){
+	/*if(single_dot && consecutive_dots==0 ){
 			fprintf(stderr, "wrong web root given");
 			exit(EXIT_FAILURE);	
-	}
+	} */
 
 	DIR* dir = opendir(web_root_dir);
 	if (dir) {
@@ -237,6 +245,7 @@ int main(int argc, char** argv) {
 				char* res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
 				//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
 				n = write(newsockfd, res1, strlen(res1));
+				close(newsockfd);
 			}
 			else{
 				printf("200: file found!\n");
@@ -311,7 +320,7 @@ int main(int argc, char** argv) {
 				assert(buffer2);
 
 				fread(buffer2, len, sizeof(unsigned char), file2);
-				int n2 = write(newsockfd, buffer2, len);
+				int n2 = write(newsockfd, buffer2, len); //buffer2+n2..loop until n2=0?
 				close(newsockfd);
 				//write(newsockfd, buffer2, len);
 			}
