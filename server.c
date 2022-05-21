@@ -173,7 +173,8 @@ int main(int argc, char** argv) {
 		}
 
 		// Read characters from the connection, then process
-		n = read(newsockfd, buffer, 255); // n is number of characters read
+		//n = read(newsockfd, buffer, 255); // n is number of characters read
+		n = read(newsockfd, buffer, 2099); // n is number of characters read
 		if (n < 0) {
 			perror("error in reading from socket");
 			exit(EXIT_FAILURE);
