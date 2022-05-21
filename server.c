@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 	int protocolno = atoi(argv[1]);
 	int portno = atoi(argv[2]);
 	char* web_root_dir = argv[3];
-	printf("web root = %s\n", web_root_dir);
+	printf("web root = %s\nport num=%d\n", web_root_dir, portno);
 
 	//ask if it makes sense
 	int consecutive_dots=0;
@@ -210,13 +210,13 @@ int main(int argc, char** argv) {
 			close(newsockfd);
 		}
 
-		int req_single_dot = 0;
+		//int req_single_dot = 0;
 		int req_consecutive_dots = 0;
 		printf("tmp path in loop = %s\n", tmp_path);
 		if(response_req_code == 0){
 			for(int i=0; i<strlen(tmp_path); i++){
 				if(tmp_path[i] == '.'){
-					req_single_dot = 1;
+					//req_single_dot = 1;
 					req_consecutive_dots += 1;
 					printf("req_cons_dots= %d\n", req_consecutive_dots);
 					if(req_consecutive_dots == 2){
@@ -347,6 +347,7 @@ int main(int argc, char** argv) {
 
 				fread(buffer2, len, sizeof(unsigned char), file2);
 				int n2 = write(newsockfd, buffer2, len); //buffer2+n2..loop until n2=0?
+				printf("n2=%d\n", n2);
 				close(newsockfd);
 				//write(newsockfd, buffer2, len);
 			}
