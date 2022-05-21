@@ -18,7 +18,8 @@
 
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
-	char buffer[256];
+	//char buffer[256];
+	char buffer[2100];
 	struct addrinfo hints, *res;
 	struct sockaddr_storage client_addr;
 	socklen_t client_addr_size;
