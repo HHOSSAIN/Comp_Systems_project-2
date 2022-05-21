@@ -39,6 +39,14 @@ int main(int argc, char** argv) {
 	int consecutive_dots=0;
 	int single_dot = 0;
 	for(int i=0; i<strlen(web_root_dir); i++){ //try strtok instead
+		//for windows only, not linux
+		/*if(web_root_dir[i] == '\\' || web_root_dir[i] == '?' || web_root_dir[i] == ':' || 
+		   web_root_dir[i] == '*' || web_root_dir[i] == '<' || web_root_dir[i] == '>' ||
+		   web_root_dir[i] == '|'){
+			   fprintf(stderr, "wrong web root given1");
+				exit(EXIT_FAILURE);	
+		} */
+
 		if(web_root_dir[i] == '/'){
 			printf("i=%c\n", web_root_dir[i]);
 		}
@@ -229,6 +237,23 @@ int main(int argc, char** argv) {
 				continue;
 			}
 		}
+
+		
+		DIR* dir2 = opendir(final_file_path);
+		if (dir2) {
+			/* Directory exists. */
+			closedir(dir2);
+			printf("404: it's directory, so file not found\n");
+			response_req_code = 404;
+			req_file_path = NULL;
+			printf("NOT FOUND RESPONSE TO BE SENT\n");
+			printf("HTTP/1.0 404\n");
+			char* res1 = "HTTP/1.0 404\r\n";
+			//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+			n = write(newsockfd, res1, strlen(res1));
+			close(newsockfd);
+		}
+
 
 		if(response_req_code == 0){
 			//checking the path
