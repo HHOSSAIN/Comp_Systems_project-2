@@ -13,6 +13,7 @@
 #include <assert.h> //hasne
 #include <dirent.h> //hasne
 #include <errno.h> //hasne
+#include <sys/sendfile.h>
 
 #define IMPLEMENTS_IPV6
 
@@ -337,19 +338,50 @@ int main(int argc, char** argv) {
 
 				//GOOD TO SEND CONTENT AS WELL
 				//FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
+
 				FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
 				assert(file2);
-				fseek(file2, 0, SEEK_END);
-				int len = ftell(file2);
-				//changing file pointer back to start to be able to copy it to buffer
-				fseek(file2, 0, SEEK_SET);
-				unsigned char* buffer2 = (unsigned char*) malloc(len + 1);
-				assert(buffer2);
+				/*fseek(file2, 0, SEEK_END);
+				int len = ftell(file2); */ //.......
 
-				fread(buffer2, len, sizeof(unsigned char), file2);
-				int n2 = write(newsockfd, buffer2, len); //buffer2+n2..loop until n2=0?
-				printf("n2=%d\n", n2);
+				//changing file pointer back to start to be able to copy it to buffer
+				/*fseek(file2, 0, SEEK_SET);
+				unsigned char* buffer2 = (unsigned char*) malloc(len + 1);
+				assert(buffer2); */ //........
+
+				//fread(buffer2, len, sizeof(unsigned char), file2); //............
+				//printf("file2:\n%s\n", buffer2);
+				//int n2 = write(newsockfd, buffer2, len); //buffer2+n2..loop until n2=0?
+				/*int n2=0;
+				do{
+					// code 
+					if(n2 != 0){
+						buffer2 = buffer2+n2;
+					}
+					n2 = write(newsockfd, buffer2, len); //loop n2 += n2
+					printf("n2=%d\n", n2);
+				}
+				while (n2 != 0); */
+				//close(newsockfd);
+
+				//int n2 = 0;
+				ssize_t n2 = 0;
+				int file2fd = fileno(file2);
+				//sendfile(newsockfd, file2fd, NULL, 4);
+				while((n2 = sendfile(newsockfd, file2fd, NULL, 2)) > 0){
+					printf("to be continued\n");
+				}
+				/*while( (int n2 = sendfile(newsockfd, file2fd, NULL, 3)) > 0 ){
+					//n2 = write(newsockfd, file2fd, len);
+					printf("n2=%d\n", n2);
+					continue;
+				} */
 				close(newsockfd);
+
+
+
+				//printf("n2=%d\n", n2);
+				//close(newsockfd);
 				//write(newsockfd, buffer2, len);
 			}
 
