@@ -206,66 +206,6 @@ int main(int argc, char** argv) {
 			//var to use -> final_file_path
 			/*................................................file open attempt............................*/
 	                file_open_attempt(final_file_path, newsockfd, buffer);
-			/*FILE* file;
-			file = fopen(final_file_path, "r");
-			if(file == NULL){
-				printf("404: not found\n");
-				//return 404;
-				response_req_code = 404;
-				req_file_path = NULL;
-				printf("NOT FOUND RESPONSE TO BE SENT\n");
-				printf("HTTP/1.0 404\n");
-				char* res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
-				//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-				n = write(newsockfd, res1, strlen(res1));
-				close(newsockfd);
-			}
-			else{
-				printf("200: file found!\n");
-				//return 200;
-				response_req_code = 200;
-				req_file_path = final_file_path; //will need to malloc if we make it a separate func
-				printf("GOOD RESPONSE TO BE SENT\n");
-				printf("HTTP/1.0 200 OK\nContent-Type:\n");
-
-				//mime handling.....................
-				//int consecutive_dots = ".."; //for future use
-				char* stopper = ".";
-				char* token;
-				char* final_token;
-				char* copy_req_file_path = (char*) malloc(sizeof(char)* strlen(buffer));
-				assert(copy_req_file_path);
-				strcpy(copy_req_file_path, req_file_path);
-
-				// get the first token 
-				token = strtok(copy_req_file_path, stopper);
-				//printf("token= %s\n", token);
-				// walk through other tokens 
-
-				while( token != NULL ) {
-					printf( " token= %s\n", token );
-					final_token = token;
-					token = strtok(NULL, stopper);
-				}
-				printf("req file path, token = %s , %s\n", req_file_path, final_token);
-				printf("final token=%s\n", final_token);
-
-				print_response_header(final_token, newsockfd);
-
-
-				FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
-				assert(file2);
-
-				ssize_t n2 = 0;
-				int file2fd = fileno(file2);
-				//sendfile(newsockfd, file2fd, NULL, 4);
-				while((n2 = sendfile(newsockfd, file2fd, NULL, 2)) > 0){
-					printf("to be continued\n");
-				}
-				close(newsockfd);
-
-			} */
-
 		}
 	}
 	close(sockfd);
@@ -377,7 +317,7 @@ int check_directory(char* final_file_path, int newsockfd){
 
 void file_open_attempt(char *final_file_path, int newsockfd, char* buffer){
     char *req_file_path;
-    int response_req_code = 0;
+    int response_req_code = 0; //initialise separately in the if-else blocks instead
     printf("response req code= %d\n", response_req_code);
 
     FILE *file;
