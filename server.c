@@ -17,6 +17,8 @@
 
 #define IMPLEMENTS_IPV6
 
+void print_response_header(char* final_token, int newsockfd );
+
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
 	//char buffer[256];
@@ -283,7 +285,7 @@ int main(int argc, char** argv) {
 				req_file_path = final_file_path; //will need to malloc if we make it a separate func
 				printf("GOOD RESPONSE TO BE SENT\n");
 				printf("HTTP/1.0 200 OK\nContent-Type:\n");
-				char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:texttt/html\r\n\r\n";
+				//char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:texttt/html\r\n\r\n"; //print header
 				//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
 				//n = write(newsockfd, res1, strlen(res1));
 
@@ -308,7 +310,9 @@ int main(int argc, char** argv) {
 				}
 				printf("req file path, token = %s , %s\n", req_file_path, final_token);
 				printf("final token=%s\n", final_token);
-				if ((strcmp(final_token, "html") == 0)) {
+
+				print_response_header(final_token, newsockfd);
+				/*if ((strcmp(final_token, "html") == 0)) {
 				  printf("EQUAL\n");
      			 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
 				  printf( "%s\n", res1);
@@ -334,7 +338,7 @@ int main(int argc, char** argv) {
      			 	   res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
 				   printf("%s\n", res1);
 	    			}
-				n = write(newsockfd, res1, strlen(res1));
+				n = write(newsockfd, res1, strlen(res1)); */ //print header........
 				/*...mime handling end......................*/
 
 				//GOOD TO SEND CONTENT AS WELL
@@ -404,3 +408,37 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
+
+
+void print_response_header(char* final_token, int newsockfd ){
+    char* res1;
+    if ((strcmp(final_token, "html") == 0)) {
+        printf("EQUAL\n");
+        res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
+        printf( "%s\n", res1);
+    }
+    //printf("testt....%s\n", res1);
+
+    else if ((strcmp(final_token, "css") == 0)) {
+        res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
+        printf("%s\n", res1);
+    }
+    else if ((strcmp(final_token, "js") == 0)) {
+        printf("EQUAL\n");
+        res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
+        printf("%s\n", res1);
+    }
+    else if ((strcmp(final_token, "jpg") == 0)) {
+        printf("EQUAL\n");
+        res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
+        printf("%s\n", res1);
+    }
+    else{
+        printf("EQUAL\n");
+        res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
+        printf("%s\n", res1);
+    }
+    int n=0;
+    n = write(newsockfd, res1, strlen(res1));
+    printf("header length=%d\n", n);
+}
