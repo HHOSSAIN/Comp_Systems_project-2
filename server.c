@@ -19,6 +19,7 @@
 void print_response_header(char* final_token, int newsockfd );
 int bad_request_check(char* primitive, int newsockfd);
 int check_consecutive_dots(char* tmp_path, int newsockfd);
+int check_directory(char* final_file_path, int newsockfd);
 
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
@@ -194,20 +195,21 @@ int main(int argc, char** argv) {
 		}
 
 		if(response_req_code == 0){
-			DIR* dir2 = opendir(final_file_path);
+			response_req_code = check_directory(final_file_path, newsockfd);
+			/*DIR* dir2 = opendir(final_file_path);
 			if (dir2) {
-				/* Directory exists. */
+				// Directory exists.
 				closedir(dir2);
 				printf("404: it's directory, so file not found\n");
 				response_req_code = 404;
 				req_file_path = NULL;
 				printf("NOT FOUND RESPONSE TO BE SENT\n");
 				printf("HTTP/1.0 404\n");
-				char* res1 = "HTTP/1.0 404\r\n";
+				char* res1 = "HTTP/1.0 404 Not Found \r\n\r\n";
 				//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
 				n = write(newsockfd, res1, strlen(res1));
 				close(newsockfd);
-			}
+			} */
 		}
 
 
@@ -358,6 +360,26 @@ int check_consecutive_dots(char* tmp_path, int newsockfd){
             continue;
         }
         continue;
+    }
+    return response_req_code;
+}
+
+int check_directory(char* final_file_path, int newsockfd){
+    int response_req_code = 0;
+    DIR *dir2 = opendir(final_file_path);
+    if (dir2){
+        /* Directory exists. */
+        closedir(dir2);
+        printf("404: it's directory, so file not found\n");
+        response_req_code = 404;
+        //req_file_path = NULL;
+        printf("NOT FOUND RESPONSE TO BE SENT\n");
+        printf("HTTP/1.0 404\n");
+        char *res1 = "HTTP/1.0 404 Not Found \r\n\r\n";
+        //n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+        int n = write(newsockfd, res1, strlen(res1));
+	printf("Not Found as it's a directory header length=%d\n", n);
+        close(newsockfd);
     }
     return response_req_code;
 }
