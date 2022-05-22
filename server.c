@@ -241,20 +241,21 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		
-		DIR* dir2 = opendir(final_file_path);
-		if (dir2) {
-			/* Directory exists. */
-			closedir(dir2);
-			printf("404: it's directory, so file not found\n");
-			response_req_code = 404;
-			req_file_path = NULL;
-			printf("NOT FOUND RESPONSE TO BE SENT\n");
-			printf("HTTP/1.0 404\n");
-			char* res1 = "HTTP/1.0 404\r\n";
-			//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-			n = write(newsockfd, res1, strlen(res1));
-			close(newsockfd);
+		if(response_req_code == 0){
+			DIR* dir2 = opendir(final_file_path);
+			if (dir2) {
+				/* Directory exists. */
+				closedir(dir2);
+				printf("404: it's directory, so file not found\n");
+				response_req_code = 404;
+				req_file_path = NULL;
+				printf("NOT FOUND RESPONSE TO BE SENT\n");
+				printf("HTTP/1.0 404\n");
+				char* res1 = "HTTP/1.0 404\r\n";
+				//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+				n = write(newsockfd, res1, strlen(res1));
+				close(newsockfd);
+			}
 		}
 
 
