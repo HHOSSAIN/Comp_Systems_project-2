@@ -18,6 +18,7 @@
 
 void print_response_header(char* final_token, int newsockfd );
 int bad_request_check(char* primitive, int newsockfd);
+int check_consecutive_dots(char* tmp_path, int newsockfd);
 
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
@@ -184,22 +185,13 @@ int main(int argc, char** argv) {
 
 		//wrong type of request sent
 		response_req_code = bad_request_check(primitive, newsockfd);
-		/*if(strcmp((primitive), "GET") != 0){
-			response_req_code = 400;
-			req_file_path = NULL;
-			printf("BAD REQ RESPONSE TO BE SENT\n");
-			printf("HTTP/1.0 400\n");
-			char* res_bad = "HTTP/1.0 400 Bad Request\r\n\r\n";
-			//n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
-			n = write(newsockfd, res_bad, strlen(res_bad));
-			close(newsockfd);
-		} */ //bad request..............
 
 		//int req_single_dot = 0;
-		int req_consecutive_dots = 0;
+		//int req_consecutive_dots = 0;
 		printf("tmp path in loop = %s\n", tmp_path);
 		if(response_req_code == 0){
-			for(int i=0; i<strlen(tmp_path); i++){
+			response_req_code = check_consecutive_dots(tmp_path, newsockfd);
+			/*for(int i=0; i<strlen(tmp_path); i++){
 				if(tmp_path[i] == '.'){
 					//req_single_dot = 1;
 					req_consecutive_dots += 1;
@@ -221,7 +213,7 @@ int main(int argc, char** argv) {
 					continue;
 				}
 				continue;
-			}
+			} */ //check for double dots...............
 		}
 
 		if(response_req_code == 0){
@@ -359,6 +351,36 @@ int bad_request_check(char* primitive, int newsockfd){
 			int n = write(newsockfd, res_bad, strlen(res_bad));
 			printf("bad header length=%d\n", n);
 			close(newsockfd);
+    }
+    return response_req_code;
+}
+
+int check_consecutive_dots(char* tmp_path, int newsockfd){
+    int req_consecutive_dots = 0;
+    int response_req_code = 0;
+    for(int i=0; i<strlen(tmp_path); i++){
+        if(tmp_path[i] == '.'){
+            //req_single_dot = 1;
+            req_consecutive_dots += 1;
+            printf("req_cons_dots= %d\n", req_consecutive_dots);
+            if(req_consecutive_dots == 2){
+                //single_dot = 0;
+                printf("404: not founddddddd\n");
+                //return 404;
+                response_req_code = 404;
+                //req_file_path = NULL;
+                printf("NOT FOUND RESPONSE TO BE SENT\n");
+                printf("HTTP/1.0 404\n");
+                char* res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
+                //n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
+                int n = write(newsockfd, res1, strlen(res1));
+                printf("Not Found due to .. header length=%d\n", n);
+                close(newsockfd);
+                break;
+            }
+            continue;
+        }
+        continue;
     }
     return response_req_code;
 }
