@@ -17,6 +17,7 @@
 #define IMPLEMENTS_IPV6
 
 void print_response_header(char* final_token, int newsockfd );
+int bad_request_check(char* primitive, int newsockfd);
 
 int main(int argc, char** argv) {
 	int sockfd, newsockfd, n, re, s;
@@ -182,7 +183,8 @@ int main(int argc, char** argv) {
 		char* req_file_path; //learn where to use it
 
 		//wrong type of request sent
-		if(strcmp((primitive), "GET") != 0){
+		response_req_code = bad_request_check(primitive, newsockfd);
+		/*if(strcmp((primitive), "GET") != 0){
 			response_req_code = 400;
 			req_file_path = NULL;
 			printf("BAD REQ RESPONSE TO BE SENT\n");
@@ -191,7 +193,7 @@ int main(int argc, char** argv) {
 			//n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
 			n = write(newsockfd, res_bad, strlen(res_bad));
 			close(newsockfd);
-		}
+		} */ //bad request..............
 
 		//int req_single_dot = 0;
 		int req_consecutive_dots = 0;
@@ -343,4 +345,20 @@ void print_response_header(char* final_token, int newsockfd ){
     int n=0;
     n = write(newsockfd, res1, strlen(res1));
     printf("header length=%d\n", n);
+}
+
+int bad_request_check(char* primitive, int newsockfd){
+    int response_req_code = 0;
+    if(strcmp((primitive), "GET") != 0){
+			response_req_code = 400;
+			//req_file_path = NULL;
+			printf("BAD REQ RESPONSE TO BE SENT\n");
+			printf("HTTP/1.0 400\n");
+			char* res_bad = "HTTP/1.0 400 Bad Request\r\n\r\n";
+			//n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
+			int n = write(newsockfd, res_bad, strlen(res_bad));
+			printf("bad header length=%d\n", n);
+			close(newsockfd);
+    }
+    return response_req_code;
 }
