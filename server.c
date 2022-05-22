@@ -21,9 +21,11 @@ int bad_request_check(char* primitive, int newsockfd);
 int check_consecutive_dots(char* tmp_path, int newsockfd);
 int check_directory(char* final_file_path, int newsockfd);
 void file_open_attempt(char *final_file_path, int newsockfd, char* buffer);
+void connection_handler(char* buffer, char* web_root_dir, int newsockfd);
 
 int main(int argc, char** argv) {
-	int sockfd, newsockfd, n, re, s;
+	//int sockfd, newsockfd, n, re, s;
+	int sockfd, newsockfd, re, s;
 	//char buffer[256];
 	char buffer[2100];
 	struct addrinfo hints, *res;
@@ -161,7 +163,9 @@ int main(int argc, char** argv) {
 
 		// Read characters from the connection, then process
 		//n = read(newsockfd, buffer, 255); // n is number of characters read
-		n = read(newsockfd, buffer, 2099); // n is number of characters read
+		/*..............................................FINAL MAIN CONNECTION HANDLER..................................*/
+	        connection_handler(buffer, web_root_dir, newsockfd);
+		/*n = read(newsockfd, buffer, 2099); // n is number of characters read
 		if (n < 0) {
 			perror("error in reading from socket");
 			exit(EXIT_FAILURE);
@@ -196,7 +200,7 @@ int main(int argc, char** argv) {
 		}
 
 		if(response_req_code == 0){
-			/*check if requested path is a directory*/
+			//check if requested path is a directory
 			response_req_code = check_directory(final_file_path, newsockfd);
 		}
 
@@ -204,9 +208,9 @@ int main(int argc, char** argv) {
 		if(response_req_code == 0){
 			//checking the path
 			//var to use -> final_file_path
-			/*................................................file open attempt............................*/
+			//................................................file open attempt............................
 	                file_open_attempt(final_file_path, newsockfd, buffer);
-		}
+		} */
 	}
 	close(sockfd);
 	close(newsockfd);
@@ -379,5 +383,60 @@ void file_open_attempt(char *final_file_path, int newsockfd, char* buffer){
         }
         close(newsockfd);
     }
+}
+
+
+
+/*central connection handler*/
+void connection_handler(char* buffer, char* web_root_dir, int newsockfd){
+    int n = read(newsockfd, buffer, 2099); // n is number of characters read
+        if (n < 0)
+        {
+            perror("error in reading from socket");
+            exit(EXIT_FAILURE);
+        }
+        // Null-terminate string
+        buffer[n] = '\0';
+        printf("buffer = %s\n", buffer);
+
+        char *tmp_path = (char *)malloc(sizeof(char) * strlen(buffer));
+        char primitive[4];
+        sscanf(buffer, "%s %s", primitive, tmp_path);
+        printf("primitive=%s, tmp_path=%s\n", primitive, tmp_path);
+        //sscanf(buffer, "%s %s %*[A-z0-9/:\n]", primitive, tmp_path);
+
+        //final path
+        //char* final_file_path = (char*) malloc(sizeof(char)* strlen(buffer)*2);
+        char *final_file_path = (char *)malloc(sizeof(char) * strlen(buffer) * 2);
+        assert(final_file_path);
+        sprintf(final_file_path, "%s%s", web_root_dir, tmp_path);
+
+        int response_req_code = 0; //bad=400, not_found=404, ok=200
+        //char* req_file_path; //learn where to use it
+
+        //wrong type of request sent
+        response_req_code = bad_request_check(primitive, newsockfd);
+
+        //int req_single_dot = 0;
+        //int req_consecutive_dots = 0;
+        printf("tmp path in loop = %s\n", tmp_path);
+        if (response_req_code == 0)
+        {
+            response_req_code = check_consecutive_dots(tmp_path, newsockfd);
+        }
+
+        if (response_req_code == 0)
+        {
+            /*check if requested path is a directory*/
+            response_req_code = check_directory(final_file_path, newsockfd);
+        }
+
+        if (response_req_code == 0)
+        {
+            //checking the pat
+            //var to use -> final_file_path
+            /*................................................file open attempt............................*/
+            file_open_attempt(final_file_path, newsockfd, buffer);
+        }
 }
 
