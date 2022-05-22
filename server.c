@@ -21,13 +21,14 @@ int bad_request_check(char* primitive, int newsockfd);
 int check_consecutive_dots(char* tmp_path, int newsockfd);
 int check_directory(char* final_file_path, int newsockfd);
 void file_open_attempt(char *final_file_path, int newsockfd, char* buffer);
-void connection_handler(char* buffer, char* web_root_dir, int newsockfd);
+void connection_handler(char *web_root_dir, int newsockfd);
+//void connection_handler(char* buffer, char* web_root_dir, int newsockfd);
 
 int main(int argc, char** argv) {
 	//int sockfd, newsockfd, n, re, s;
 	int sockfd, newsockfd, re, s;
 	//char buffer[256];
-	char buffer[2100];
+	//char buffer[2100];
 	struct addrinfo hints, *res;
 	struct sockaddr_storage client_addr;
 	socklen_t client_addr_size;
@@ -164,7 +165,8 @@ int main(int argc, char** argv) {
 		// Read characters from the connection, then process
 		//n = read(newsockfd, buffer, 255); // n is number of characters read
 		/*..............................................FINAL MAIN CONNECTION HANDLER..................................*/
-	        connection_handler(buffer, web_root_dir, newsockfd);
+	        //connection_handler(buffer, web_root_dir, newsockfd);
+		connection_handler(web_root_dir, newsockfd);
 	}
 	close(sockfd);
 	close(newsockfd);
@@ -342,7 +344,9 @@ void file_open_attempt(char *final_file_path, int newsockfd, char* buffer){
 
 
 /*central connection handler*/
-void connection_handler(char* buffer, char* web_root_dir, int newsockfd){
+//void connection_handler(char* buffer, char* web_root_dir, int newsockfd){
+void connection_handler(char *web_root_dir, int newsockfd){
+    char buffer[2100];
     int n = read(newsockfd, buffer, 2099); // n is number of characters read
         if (n < 0)
         {
