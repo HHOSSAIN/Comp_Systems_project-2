@@ -191,29 +191,6 @@ int main(int argc, char** argv) {
 		printf("tmp path in loop = %s\n", tmp_path);
 		if(response_req_code == 0){
 			response_req_code = check_consecutive_dots(tmp_path, newsockfd);
-			/*for(int i=0; i<strlen(tmp_path); i++){
-				if(tmp_path[i] == '.'){
-					//req_single_dot = 1;
-					req_consecutive_dots += 1;
-					printf("req_cons_dots= %d\n", req_consecutive_dots);
-					if(req_consecutive_dots == 2){
-						//single_dot = 0;
-						printf("404: not founddddddd\n");
-						//return 404;
-						response_req_code = 404;
-						req_file_path = NULL;
-						printf("NOT FOUND RESPONSE TO BE SENT\n");
-						printf("HTTP/1.0 404\n");
-						char* res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
-						//n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-						n = write(newsockfd, res1, strlen(res1));
-						close(newsockfd);
-						break;
-					}
-					continue;
-				}
-				continue;
-			} */ //check for double dots...............
 		}
 
 		if(response_req_code == 0){
