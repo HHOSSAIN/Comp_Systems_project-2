@@ -1,4 +1,3 @@
-
 // A simple server in the internet domain using TCP
 // The port number is passed as an argument
 // To compile: gcc server.c -o server
@@ -43,14 +42,6 @@ int main(int argc, char** argv) {
 	int consecutive_dots=0;
 	int single_dot = 0;
 	for(int i=0; i<strlen(web_root_dir); i++){ //try strtok instead
-		//for windows only, not linux
-		/*if(web_root_dir[i] == '\\' || web_root_dir[i] == '?' || web_root_dir[i] == ':' || 
-		   web_root_dir[i] == '*' || web_root_dir[i] == '<' || web_root_dir[i] == '>' ||
-		   web_root_dir[i] == '|'){
-			   fprintf(stderr, "wrong web root given1");
-				exit(EXIT_FAILURE);	
-		} */
-
 		if(web_root_dir[i] == '/'){
 			printf("i=%c\n", web_root_dir[i]);
 		}
@@ -83,10 +74,6 @@ int main(int argc, char** argv) {
 			continue;
 		}
 	}
-	/*if(single_dot && consecutive_dots==0 ){
-			fprintf(stderr, "wrong web root given");
-			exit(EXIT_FAILURE);	
-	} */
 
 	DIR* dir = opendir(web_root_dir);
 	if (dir) {
@@ -97,14 +84,6 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "wrong web root given 2");
 		exit(EXIT_FAILURE);	
 	}
-	/*char* server_file_path = (char*) malloc(sizeof(char)* 200); 
-	assert(server_file_path);
-	sprintf(server_file_path, "%s%s", web_root_dir, "/server.c");
-	printf("server_file_path= %s\n", server_file_path);
-	if (fopen(server_file_path, "r") == NULL) {
-        fprintf(stderr, "wrong web root given");
-		exit(EXIT_FAILURE);	
-	} */
 
 	// Create address we're going to listen on (with given port number)
 	memset(&hints, 0, sizeof hints);
@@ -285,9 +264,6 @@ int main(int argc, char** argv) {
 				req_file_path = final_file_path; //will need to malloc if we make it a separate func
 				printf("GOOD RESPONSE TO BE SENT\n");
 				printf("HTTP/1.0 200 OK\nContent-Type:\n");
-				//char* res1 = "HTTP/1.0 200 OK\r\nContent-Type:texttt/html\r\n\r\n"; //print header
-				//n = write(newsockfd, "HTTP/1.0 200 OK\r\nContent-Type:\n", 18);
-				//n = write(newsockfd, res1, strlen(res1));
 
 				/*mime handling.....................*/
 				//int consecutive_dots = ".."; //for future use
@@ -312,96 +288,22 @@ int main(int argc, char** argv) {
 				printf("final token=%s\n", final_token);
 
 				print_response_header(final_token, newsockfd);
-				/*if ((strcmp(final_token, "html") == 0)) {
-				  printf("EQUAL\n");
-     			 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
-				  printf( "%s\n", res1);
-	    			}
-				//printf("testt....%s\n", res1);
 
-				else if ((strcmp(final_token, "css") == 0)) {
-     			 	  res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
-				  printf("%s\n", res1);
-	    			}
-				else if ((strcmp(final_token, "js") == 0)) {
-				   printf("EQUAL\n");
-	     			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
-				   printf("%s\n", res1);
-    				}
-				else if ((strcmp(final_token, "jpg") == 0)) {
-				   printf("EQUAL\n");
-	     			   res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
-				   printf("%s\n", res1);
-	    			}
-				else{
-				   printf("EQUAL\n");
-     			 	   res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
-				   printf("%s\n", res1);
-	    			}
-				n = write(newsockfd, res1, strlen(res1)); */ //print header........
-				/*...mime handling end......................*/
-
-				//GOOD TO SEND CONTENT AS WELL
-				//FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
 
 				FILE* file2 = fopen(req_file_path, "rb"); //if file is image type
 				assert(file2);
-				/*fseek(file2, 0, SEEK_END);
-				int len = ftell(file2); */ //.......
 
-				//changing file pointer back to start to be able to copy it to buffer
-				/*fseek(file2, 0, SEEK_SET);
-				unsigned char* buffer2 = (unsigned char*) malloc(len + 1);
-				assert(buffer2); */ //........
-
-				//fread(buffer2, len, sizeof(unsigned char), file2); //............
-				//printf("file2:\n%s\n", buffer2);
-				//int n2 = write(newsockfd, buffer2, len); //buffer2+n2..loop until n2=0?
-				/*int n2=0;
-				do{
-					// code 
-					if(n2 != 0){
-						buffer2 = buffer2+n2;
-					}
-					n2 = write(newsockfd, buffer2, len); //loop n2 += n2
-					printf("n2=%d\n", n2);
-				}
-				while (n2 != 0); */
-				//close(newsockfd);
-
-				//int n2 = 0;
 				ssize_t n2 = 0;
 				int file2fd = fileno(file2);
 				//sendfile(newsockfd, file2fd, NULL, 4);
 				while((n2 = sendfile(newsockfd, file2fd, NULL, 2)) > 0){
 					printf("to be continued\n");
 				}
-				/*while( (int n2 = sendfile(newsockfd, file2fd, NULL, 3)) > 0 ){
-					//n2 = write(newsockfd, file2fd, len);
-					printf("n2=%d\n", n2);
-					continue;
-				} */
 				close(newsockfd);
 
-
-
-				//printf("n2=%d\n", n2);
-				//close(newsockfd);
-				//write(newsockfd, buffer2, len);
 			}
 
 		}
-		//preparing a response
-		//char* response;
-
-
-		// Write message back
-		/*printf("Here is the message: %s\n", buffer);
-		n = write(newsockfd, "I got your message", 18);
-		if (n < 0) {
-			perror("write");
-			exit(EXIT_FAILURE);
-		}*/
 	}
 	close(sockfd);
 	close(newsockfd);
