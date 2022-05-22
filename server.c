@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
 
 		//final path
 		//char* final_file_path = (char*) malloc(sizeof(char)* strlen(buffer)*2);
-		char* final_file_path = (char*) malloc(sizeof(char)* strlen(buffer));
+		char* final_file_path = (char*) malloc(sizeof(char)* strlen(buffer)*2);
 		assert(final_file_path);
 		sprintf(final_file_path, "%s%s", web_root_dir, tmp_path);
 
@@ -314,7 +314,7 @@ int check_directory(char* final_file_path, int newsockfd){
     return response_req_code;
 }
 
-
+//malloc involved, make sure to free
 void file_open_attempt(char *final_file_path, int newsockfd, char* buffer){
     char *req_file_path;
     int response_req_code = 0; //initialise separately in the if-else blocks instead
@@ -348,7 +348,8 @@ void file_open_attempt(char *final_file_path, int newsockfd, char* buffer){
         char *stopper = ".";
         char *token;
         char *final_token;
-        char *copy_req_file_path = (char *)malloc(sizeof(char) * strlen(buffer)*2);
+        //char *copy_req_file_path = (char *)malloc(sizeof(char) * strlen(buffer)*2);
+	char *copy_req_file_path = (char *)malloc(sizeof(char) * strlen(req_file_path));
         assert(copy_req_file_path);
         strcpy(copy_req_file_path, req_file_path);
 
