@@ -164,31 +164,41 @@ int main(int argc, char** argv) {
 		perror("accept");
 		exit(EXIT_FAILURE);
 	} */
-	pthread_t thread_id;
-	//thread_input_t input;
+	pthread_t thread_id[5];
+	int i = -1;
+	thread_input_t input[5];
+	int newsockfd[5];
 	while (1){
-		int newsockfd =
+		i += 1;
+		if(i == 5){
+			i = 0;
+		}
+		newsockfd[i] =
 			accept(sockfd, (struct sockaddr*)&client_addr, &client_addr_size);
 		if (newsockfd < 0) {
 			perror("accept");
 			exit(EXIT_FAILURE);
 		}
+		/*i += 1;
+		if(i == 5){
+			i = 0;
+		} */
 
 		//pthread_t thread_id;
-		thread_input_t input;
+		//thread_input_t input;
 
-	        input.web_root_dir = (char *)malloc(sizeof(char) * strlen(web_root_dir)+1);
+	        input[i].web_root_dir = (char *)malloc(sizeof(char) * strlen(web_root_dir)+1);
 		printf("web root dir in loop= %s , lenght=%ld\n", web_root_dir, strlen(web_root_dir));
-        	strcpy(input.web_root_dir, web_root_dir);
-		size_t len = strlen(input.web_root_dir);
-		input.web_root_dir[len] = '\0';
-		printf("web root in struct= %s , len=%ld\n", input.web_root_dir, strlen(input.web_root_dir));
+        	strcpy(input[i].web_root_dir, web_root_dir);
+		size_t len = strlen(input[i].web_root_dir);
+		input[i].web_root_dir[len] = '\0';
+		printf("web root in struct= %s , len=%ld\n", input[i].web_root_dir, strlen(input[i].web_root_dir));
 
-	        input.thread = thread_id;
-        	input.socket_file_desc = newsockfd;
+	        input[i].thread = thread_id[i];
+        	input[i].socket_file_desc = newsockfd[i];
 	        //connection_handler(char *web_root_dir, int newsockfd)
         	// Create a thread to handle the connection.
-	        pthread_create(&thread_id, NULL, connection_handler, (void *) &input);
+	        pthread_create(&(thread_id[i]), NULL, connection_handler, (void *) &input[i]);
 		//pthread_join(thread_id, NULL);
 		//pthread_detach(thread_id);
 
