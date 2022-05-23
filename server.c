@@ -13,20 +13,31 @@
 #include <dirent.h> //hasne
 #include <errno.h> //hasne
 #include <sys/sendfile.h>
+#include <pthread.h>
 
 #define IMPLEMENTS_IPV6
+#define MULTITHREADED
+
+typedef struct {
+    //char* buffer;
+    char* web_root_dir;
+    int socket_file_desc;
+    int thread;
+} thread_input_t;
 
 void print_response_header(char* final_token, int newsockfd );
 int bad_request_check(char* primitive, int newsockfd);
 int check_consecutive_dots(char* tmp_path, int newsockfd);
 int check_directory(char* final_file_path, int newsockfd);
 void file_open_attempt(char *final_file_path, int newsockfd, char* buffer);
-void connection_handler(char *web_root_dir, int newsockfd);
+void* connection_handler(void *input);
+//void connection_handler(char *web_root_dir, int newsockfd);
 //void connection_handler(char* buffer, char* web_root_dir, int newsockfd);
 
 int main(int argc, char** argv) {
 	//int sockfd, newsockfd, n, re, s;
-	int sockfd, newsockfd, re, s;
+	//int sockfd, newsockfd, re, s;
+	int sockfd, re, s;
 	//char buffer[256];
 	//char buffer[2100];
 	struct addrinfo hints, *res;
@@ -153,23 +164,41 @@ int main(int argc, char** argv) {
 		perror("accept");
 		exit(EXIT_FAILURE);
 	} */
-
+	//pthread_t thread_id;
 	while (1){
-		newsockfd =
+		int newsockfd =
 			accept(sockfd, (struct sockaddr*)&client_addr, &client_addr_size);
 		if (newsockfd < 0) {
 			perror("accept");
 			exit(EXIT_FAILURE);
 		}
 
+		pthread_t thread_id;
+		thread_input_t input;
+
+	        input.web_root_dir = (char *)malloc(sizeof(char) * strlen(web_root_dir)+1);
+		printf("web root dir in loop= %s , lenght=%ld\n", web_root_dir, strlen(web_root_dir));
+        	strcpy(input.web_root_dir, web_root_dir);
+		size_t len = strlen(input.web_root_dir);
+		input.web_root_dir[len] = '\0';
+		printf("web root in struct= %s , len=%ld\n", input.web_root_dir, strlen(input.web_root_dir));
+
+	        input.thread = thread_id;
+        	input.socket_file_desc = newsockfd;
+	        //connection_handler(char *web_root_dir, int newsockfd)
+        	// Create a thread to handle the connection.
+	        pthread_create(&thread_id, NULL, connection_handler, (void *) &input);
+		//pthread_join(thread_id, NULL);
+		//pthread_detach(thread_id);
+
 		// Read characters from the connection, then process
 		//n = read(newsockfd, buffer, 255); // n is number of characters read
 		/*..............................................FINAL MAIN CONNECTION HANDLER..................................*/
 	        //connection_handler(buffer, web_root_dir, newsockfd);
-		connection_handler(web_root_dir, newsockfd);
+		//connection_handler(web_root_dir, newsockfd);
 	}
 	close(sockfd);
-	close(newsockfd);
+	//close(newsockfd);
 	return 0;
 }
 
@@ -345,7 +374,17 @@ void file_open_attempt(char *final_file_path, int newsockfd, char* buffer){
 
 /*central connection handler*/
 //void connection_handler(char* buffer, char* web_root_dir, int newsockfd){
-void connection_handler(char *web_root_dir, int newsockfd){
+//void connection_handler(char *web_root_dir, int newsockfd){
+void* connection_handler(void *input) {
+
+    thread_input_t* vars = (thread_input_t *) input;
+    printf("web root in handler= %s , len=%ld\n", (*vars).web_root_dir, strlen((*vars).web_root_dir));
+    //size_t len = strlen((*vars).web_root_dir);
+    //(*vars).web_root_dir[len-2] = '\0';
+    printf("web root in handler after fix= %s\n", (*vars).web_root_dir);
+    char *web_root_dir = (*vars).web_root_dir;
+    int newsockfd = (*vars).socket_file_desc;
+
     char buffer[2100];
     int n = read(newsockfd, buffer, 2099); // n is number of characters read
         if (n < 0)
@@ -368,6 +407,7 @@ void connection_handler(char *web_root_dir, int newsockfd){
         char *final_file_path = (char *)malloc(sizeof(char) * strlen(buffer) * 2);
         assert(final_file_path);
         sprintf(final_file_path, "%s%s", web_root_dir, tmp_path);
+	printf("final file path=%s\n", final_file_path);
 
         int response_req_code = 0; //bad=400, not_found=404, ok=200
         //char* req_file_path; //learn where to use it
@@ -396,5 +436,7 @@ void connection_handler(char *web_root_dir, int newsockfd){
             /*................................................file open attempt............................*/
             file_open_attempt(final_file_path, newsockfd, buffer);
         }
+	close(newsockfd);
+	pthread_exit(NULL);
 }
 
