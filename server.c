@@ -16,7 +16,7 @@
 #include <pthread.h>
 
 #define IMPLEMENTS_IPV6
-#define MULTITHREADED
+//#define MULTITHREADED
 
 typedef struct {
     //char* buffer;
