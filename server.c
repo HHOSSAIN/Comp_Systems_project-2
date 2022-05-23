@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
 		exit(EXIT_FAILURE);
 	} */
 	pthread_t thread_id;
-	thread_input_t input;
+	//thread_input_t input;
 	while (1){
 		int newsockfd =
 			accept(sockfd, (struct sockaddr*)&client_addr, &client_addr_size);
@@ -175,7 +175,7 @@ int main(int argc, char** argv) {
 		}
 
 		//pthread_t thread_id;
-		//thread_input_t input;
+		thread_input_t input;
 
 	        input.web_root_dir = (char *)malloc(sizeof(char) * strlen(web_root_dir)+1);
 		printf("web root dir in loop= %s , lenght=%ld\n", web_root_dir, strlen(web_root_dir));
