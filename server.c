@@ -16,6 +16,7 @@
 #include <pthread.h>
 
 #define IMPLEMENTS_IPV6
+#define MULTITHREADED
 
 /*  Status Codes    */
 #define BAD_REQUEST 400
