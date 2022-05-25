@@ -416,7 +416,7 @@ void file_open_attempt(char *final_file_path, int newsockfd, char *buffer)
         ssize_t n2 = 0;
         int file2fd = fileno(file2);
         //sendfile(newsockfd, file2fd, NULL, 4);
-        while ((n2 = sendfile(newsockfd, file2fd, NULL, 2)) > 0)
+        while ((n2 = sendfile(newsockfd, file2fd, NULL, 100)) > 0)
         {
             printf("to be continued\n");
         }
