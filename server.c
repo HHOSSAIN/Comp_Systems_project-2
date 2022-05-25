@@ -16,7 +16,6 @@
 #include <pthread.h>
 
 #define IMPLEMENTS_IPV6
-#define MULTITHREADED
 
 /*  Status Codes    */
 #define BAD_REQUEST 400
@@ -242,35 +241,44 @@ int main(int argc, char **argv)
 void print_response_header(char *final_token, int newsockfd)
 {
     char *res1;
-    if ((strcmp(final_token, "html") == 0))
+    //if ((strcmp(final_token, "html") == 0))
+    if ((strcmp(final_token, HTML_TYPE) == 0))
     {
         printf("EQUAL\n");
-        res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
+        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
+        res1 = RESPONSE_HEADER_HTML;
         printf("%s\n", res1);
     }
     //printf("testt....%s\n", res1);
 
-    else if ((strcmp(final_token, "css") == 0))
+    //else if ((strcmp(final_token, "css") == 0))
+    else if ((strcmp(final_token, CSS_TYPE) == 0))
     {
-        res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
+        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
+        res1 = RESPONSE_HEADER_CSS;
         printf("%s\n", res1);
     }
-    else if ((strcmp(final_token, "js") == 0))
+    //else if ((strcmp(final_token, "js") == 0))
+    else if ((strcmp(final_token, JS_TYPE) == 0))
     {
         printf("EQUAL\n");
-        res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
+        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
+        res1 = RESPONSE_HEADER_JS;
         printf("%s\n", res1);
     }
-    else if ((strcmp(final_token, "jpg") == 0))
+    //else if ((strcmp(final_token, "jpg") == 0))
+    else if ((strcmp(final_token, JPG_TYPE) == 0))
     {
         printf("EQUAL\n");
-        res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
+        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
+        res1 = RESPONSE_HEADER_JPG;
         printf("%s\n", res1);
     }
     else
     {
         printf("EQUAL\n");
-        res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
+        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
+        res1 = RESPONSE_HEADER_OTHER;
         printf("%s\n", res1);
     }
     int n = 0;
@@ -316,7 +324,8 @@ int check_consecutive_dots(char *tmp_path, int newsockfd)
                 //req_file_path = NULL;
                 printf("NOT FOUND RESPONSE TO BE SENT\n");
                 printf("HTTP/1.0 404\n");
-                char *res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
+                //char *res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
+                char *res1 = NOT_FOUND_RESPONSE;
                 //n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
                 int n = write(newsockfd, res1, strlen(res1));
                 printf("Not Found due to .. header length=%d\n", n);
@@ -485,3 +494,4 @@ void *connection_handler(void *input)
     close(newsockfd);
     pthread_exit(NULL);
 }
+
