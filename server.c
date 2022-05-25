@@ -471,8 +471,8 @@ void *connection_handler(void *input)
 {
 
     thread_input_t *vars = (thread_input_t *)input;
-    printf("web root in handler= %s , len=%ld\n", (*vars).web_root_dir, strlen((*vars).web_root_dir));
-    printf("web root in handler after fix= %s\n", (*vars).web_root_dir);
+    //printf("web root in handler= %s , len=%ld\n", (*vars).web_root_dir, strlen((*vars).web_root_dir));
+    //printf("web root in handler after fix= %s\n", (*vars).web_root_dir);
     char *web_root_dir = (*vars).web_root_dir;
     int newsockfd = (*vars).socket_file_desc;
 
@@ -485,19 +485,19 @@ void *connection_handler(void *input)
     }
     // Null-terminate string
     buffer[n] = '\0';
-    printf("buffer = %s\n", buffer);
+    //printf("buffer = %s\n", buffer);
 
     char *tmp_path = (char *)malloc(sizeof(char) * strlen(buffer));
     char primitive[4];
     sscanf(buffer, "%s %s", primitive, tmp_path);
-    printf("primitive=%s, tmp_path=%s\n", primitive, tmp_path);
+    //printf("primitive=%s, tmp_path=%s\n", primitive, tmp_path);
 
     //final path
     //char* final_file_path = (char*) malloc(sizeof(char)* strlen(buffer)*2);
     char *final_file_path = (char *)malloc(sizeof(char) * strlen(buffer) * 2);
     assert(final_file_path);
     sprintf(final_file_path, "%s%s", web_root_dir, tmp_path);
-    printf("final file path=%s\n", final_file_path);
+    //printf("final file path=%s\n", final_file_path);
 
     int response_req_code = 0; //bad=400, not_found=404, ok=200
     //char* req_file_path; //learn where to use it
@@ -505,7 +505,7 @@ void *connection_handler(void *input)
     //wrong type of request sent
     response_req_code = bad_request_check(primitive, newsockfd);
 
-    printf("tmp path in loop = %s\n", tmp_path);
+    //printf("tmp path in loop = %s\n", tmp_path);
     if (response_req_code == 0)
     {
         response_req_code = check_consecutive_dots(tmp_path, newsockfd);
