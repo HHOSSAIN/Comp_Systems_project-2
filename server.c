@@ -1,7 +1,14 @@
+/*
+Name: Hasne Hossain
+ID: 1102602
+
+Skeleteton code taken from practical
+
 // A simple server in the internet domain using TCP
 // The port number is passed as an argument
 // To compile: gcc server.c -o server
 // Reference: Beej's networking guide, man pages
+*/
 
 #define _POSIX_C_SOURCE 200112L
 #include <netdb.h>
@@ -9,9 +16,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <assert.h> //hasne
-#include <dirent.h> //hasne
-#include <errno.h>  //hasne
+
+// added by Hasne
+#include <assert.h>
+#include <dirent.h>
+#include <errno.h>
 #include <sys/sendfile.h>
 #include <pthread.h>
 
@@ -79,6 +88,8 @@ int main(int argc, char **argv)
 
     int consecutive_dots = 0;
     int single_dot = 0;
+
+    /*check presence of file extension and more than 2 consecutive dots*/
     for (int i = 0; i < strlen(web_root_dir); i++)
     { //strtok is the other option
         if (web_root_dir[i] == '/')
@@ -118,6 +129,7 @@ int main(int argc, char **argv)
         }
     }
 
+    /*checking if directory exists*/
     DIR *dir = opendir(web_root_dir);
     if (dir)
     {
@@ -238,46 +250,37 @@ int main(int argc, char **argv)
     return 0;
 }
 
+/*Printing required response header*/
 void print_response_header(char *final_token, int newsockfd)
 {
     char *res1;
-    //if ((strcmp(final_token, "html") == 0))
     if ((strcmp(final_token, HTML_TYPE) == 0))
     {
         printf("EQUAL\n");
-        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
         res1 = RESPONSE_HEADER_HTML;
         printf("%s\n", res1);
     }
-    //printf("testt....%s\n", res1);
 
-    //else if ((strcmp(final_token, "css") == 0))
     else if ((strcmp(final_token, CSS_TYPE) == 0))
     {
-        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/css\r\n\r\n";
         res1 = RESPONSE_HEADER_CSS;
         printf("%s\n", res1);
     }
-    //else if ((strcmp(final_token, "js") == 0))
     else if ((strcmp(final_token, JS_TYPE) == 0))
     {
         printf("EQUAL\n");
-        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: text/javascript\r\n\r\n";
         res1 = RESPONSE_HEADER_JS;
         printf("%s\n", res1);
     }
-    //else if ((strcmp(final_token, "jpg") == 0))
     else if ((strcmp(final_token, JPG_TYPE) == 0))
     {
         printf("EQUAL\n");
-        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n";
         res1 = RESPONSE_HEADER_JPG;
         printf("%s\n", res1);
     }
     else
     {
         printf("EQUAL\n");
-        //res1 = "HTTP/1.0 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n";
         res1 = RESPONSE_HEADER_OTHER;
         printf("%s\n", res1);
     }
@@ -286,6 +289,7 @@ void print_response_header(char *final_token, int newsockfd)
     printf("header length=%d\n", n);
 }
 
+/*check for 400 bad request*/
 int bad_request_check(char *primitive, int newsockfd)
 {
     int response_req_code = 0;
@@ -304,6 +308,7 @@ int bad_request_check(char *primitive, int newsockfd)
     return response_req_code;
 }
 
+/*check for consecutive dots in path*/
 int check_consecutive_dots(char *tmp_path, int newsockfd)
 {
     int req_consecutive_dots = 0;
@@ -339,6 +344,7 @@ int check_consecutive_dots(char *tmp_path, int newsockfd)
     return response_req_code;
 }
 
+/*check for directory existence*/
 int check_directory(char *final_file_path, int newsockfd)
 {
     int response_req_code = 0;
@@ -362,6 +368,7 @@ int check_directory(char *final_file_path, int newsockfd)
 }
 
 //malloc involved, make sure to free
+/*attempt to open file*/
 void file_open_attempt(char *final_file_path, int newsockfd, char *buffer)
 {
     char *req_file_path;
