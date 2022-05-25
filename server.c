@@ -82,9 +82,9 @@ int main(int argc, char **argv)
 
     //protocol, port num and web root parsing
     int protocolno = atoi(argv[1]);
-    int portno = atoi(argv[2]);
+    //int portno = atoi(argv[2]);
     char *web_root_dir = argv[3];
-    printf("web root = %s\nport num=%d\n", web_root_dir, portno);
+    //printf("web root = %s\nport num=%d\n", web_root_dir, portno);
 
     int consecutive_dots = 0;
     int single_dot = 0;
@@ -92,10 +92,13 @@ int main(int argc, char **argv)
     /*check presence of file extension and more than 2 consecutive dots*/
     for (int i = 0; i < strlen(web_root_dir); i++)
     { //strtok is the other option
-        if (web_root_dir[i] == '/')
+
+        //FOR TESTING
+        /*if (web_root_dir[i] == '/')
         {
             printf("i=%c\n", web_root_dir[i]);
-        }
+        } */
+
         if (web_root_dir[i] == '.')
         {
             single_dot = 1;
@@ -103,7 +106,7 @@ int main(int argc, char **argv)
             if (consecutive_dots == 2)
             {
                 single_dot = 0;
-                printf("eee....single dot is 0!!\n");
+                //printf("eee....single dot is 0!!\n");
             }
             else if (consecutive_dots > 2)
             {
@@ -119,7 +122,7 @@ int main(int argc, char **argv)
         {
             if ((single_dot == 1) && (web_root_dir[i] != '/'))
             {
-                printf("char= %c\n", web_root_dir[i]);
+                //printf("char= %c\n", web_root_dir[i]);
                 fprintf(stderr, "wrong web root given111");
                 exit(EXIT_FAILURE);
             }
@@ -228,12 +231,12 @@ int main(int argc, char **argv)
         //thread_input_t input;
 
         input[i].web_root_dir = (char *)malloc(sizeof(char) * strlen(web_root_dir) + 1);
-        printf("web root dir in loop= %s , lenght=%ld\n", web_root_dir, strlen(web_root_dir));
+        //printf("web root dir in loop= %s , lenght=%ld\n", web_root_dir, strlen(web_root_dir));
 
         strcpy(input[i].web_root_dir, web_root_dir);
         size_t len = strlen(input[i].web_root_dir);
         input[i].web_root_dir[len] = '\0';
-        printf("web root in struct= %s , len=%ld\n", input[i].web_root_dir, strlen(input[i].web_root_dir));
+        //printf("web root in struct= %s , len=%ld\n", input[i].web_root_dir, strlen(input[i].web_root_dir));
 
         input[i].thread = thread_id[i];
         input[i].socket_file_desc = newsockfd[i];
@@ -256,37 +259,38 @@ void print_response_header(char *final_token, int newsockfd)
     char *res1;
     if ((strcmp(final_token, HTML_TYPE) == 0))
     {
-        printf("EQUAL\n");
+        //printf("EQUAL\n");
         res1 = RESPONSE_HEADER_HTML;
-        printf("%s\n", res1);
+        //printf("%s\n", res1);
     }
 
     else if ((strcmp(final_token, CSS_TYPE) == 0))
     {
         res1 = RESPONSE_HEADER_CSS;
-        printf("%s\n", res1);
+        //printf("%s\n", res1);
     }
     else if ((strcmp(final_token, JS_TYPE) == 0))
     {
-        printf("EQUAL\n");
+        //printf("EQUAL\n");
         res1 = RESPONSE_HEADER_JS;
-        printf("%s\n", res1);
+        //printf("%s\n", res1);
     }
     else if ((strcmp(final_token, JPG_TYPE) == 0))
     {
-        printf("EQUAL\n");
+        //printf("EQUAL\n");
         res1 = RESPONSE_HEADER_JPG;
-        printf("%s\n", res1);
+        //printf("%s\n", res1);
     }
     else
     {
-        printf("EQUAL\n");
+        //printf("EQUAL\n");
         res1 = RESPONSE_HEADER_OTHER;
-        printf("%s\n", res1);
+        //printf("%s\n", res1);
     }
-    int n = 0;
-    n = write(newsockfd, res1, strlen(res1));
-    printf("header length=%d\n", n);
+    //int n = 0;
+    //n = write(newsockfd, res1, strlen(res1));
+    write(newsockfd, res1, strlen(res1));
+    //printf("header length=%d\n", n);
 }
 
 /*check for 400 bad request*/
@@ -296,13 +300,18 @@ int bad_request_check(char *primitive, int newsockfd)
     if (strcmp((primitive), "GET") != 0)
     {
         response_req_code = 400;
+
         //req_file_path = NULL;
-        printf("BAD REQ RESPONSE TO BE SENT\n");
-        printf("HTTP/1.0 400\n");
+        //printf("BAD REQ RESPONSE TO BE SENT\n");
+        //printf("HTTP/1.0 400\n");
+
         char *res_bad = "HTTP/1.0 400 Bad Request\r\n\r\n";
+        write(newsockfd, res_bad, strlen(res_bad));
+
         //n = write(newsockfd, "HTTP/1.0 400\r\n", 18);
-        int n = write(newsockfd, res_bad, strlen(res_bad));
-        printf("bad header length=%d\n", n);
+        //int n = write(newsockfd, res_bad, strlen(res_bad));
+        //printf("bad header length=%d\n", n);
+
         close(newsockfd);
     }
     return response_req_code;
@@ -319,21 +328,27 @@ int check_consecutive_dots(char *tmp_path, int newsockfd)
         {
             //req_single_dot = 1;
             req_consecutive_dots += 1;
-            printf("req_cons_dots= %d\n", req_consecutive_dots);
+            //printf("req_cons_dots= %d\n", req_consecutive_dots);
             if (req_consecutive_dots == 2)
             {
                 //single_dot = 0;
-                printf("404: not founddddddd\n");
+                //printf("404: not founddddddd\n");
                 //return 404;
+
                 response_req_code = 404;
+
                 //req_file_path = NULL;
-                printf("NOT FOUND RESPONSE TO BE SENT\n");
-                printf("HTTP/1.0 404\n");
+                //printf("NOT FOUND RESPONSE TO BE SENT\n");
+                //printf("HTTP/1.0 404\n");
                 //char *res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
+
                 char *res1 = NOT_FOUND_RESPONSE;
+                write(newsockfd, res1, strlen(res1));
+
                 //n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-                int n = write(newsockfd, res1, strlen(res1));
-                printf("Not Found due to .. header length=%d\n", n);
+                //int n = write(newsockfd, res1, strlen(res1));
+                //printf("Not Found due to .. header length=%d\n", n);
+
                 close(newsockfd);
                 break;
             }
@@ -353,15 +368,21 @@ int check_directory(char *final_file_path, int newsockfd)
     {
         /* Directory exists. */
         closedir(dir2);
-        printf("404: it's directory, so file not found\n");
+        //printf("404: it's directory, so file not found\n");
         response_req_code = 404;
+        
         //req_file_path = NULL;
-        printf("NOT FOUND RESPONSE TO BE SENT\n");
-        printf("HTTP/1.0 404\n");
+        //printf("NOT FOUND RESPONSE TO BE SENT\n");
+        //printf("HTTP/1.0 404\n");
+
         char *res1 = "HTTP/1.0 404 Not Found \r\n\r\n";
+        
         //n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-        int n = write(newsockfd, res1, strlen(res1));
-        printf("Not Found as it's a directory header length=%d\n", n);
+        //int n = write(newsockfd, res1, strlen(res1));
+        //printf("Not Found as it's a directory header length=%d\n", n);
+
+        write(newsockfd, res1, strlen(res1));
+        
         close(newsockfd);
     }
     return response_req_code;
@@ -372,33 +393,37 @@ int check_directory(char *final_file_path, int newsockfd)
 void file_open_attempt(char *final_file_path, int newsockfd, char *buffer)
 {
     char *req_file_path;
-    int response_req_code = 0; //initialise separately in the if-else blocks instead
-    printf("response req code= %d\n", response_req_code);
+    //int response_req_code; //initialise separately in the if-else blocks instead
+    //printf("response req code= %d\n", response_req_code);
 
     FILE *file;
     file = fopen(final_file_path, "r");
     if (file == NULL)
     {
-        printf("404: not found\n");
+        //printf("404: not found\n");
         //return 404;
-        response_req_code = 404;
+        //int response_req_code = 404;
         req_file_path = NULL;
-        printf("NOT FOUND RESPONSE TO BE SENT\n");
-        printf("HTTP/1.0 404\n");
+        //printf("NOT FOUND RESPONSE TO BE SENT\n");
+        //printf("HTTP/1.0 404\n");
+
         char *res1 = "HTTP/1.0 404 Not Found\r\n\r\n";
+
         //n = write(newsockfd, "HTTP/1.0 404\r\n", 18);
-        int n = write(newsockfd, res1, strlen(res1));
-        printf("Not Found file header length=%d\n", n);
+        //int n = write(newsockfd, res1, strlen(res1));
+        //printf("Not Found file header length=%d\n", n);
+
+        write(newsockfd, res1, strlen(res1));
         close(newsockfd);
     }
     else
     {
-        printf("200: file found!\n");
+        //printf("200: file found!\n");
         //return 200;
-        response_req_code = 200;
+        //int response_req_code = 200;
         req_file_path = final_file_path; //will need to malloc if we make it a separate func
-        printf("GOOD RESPONSE TO BE SENT\n");
-        printf("HTTP/1.0 200 OK\nContent-Type:\n");
+        //printf("GOOD RESPONSE TO BE SENT\n");
+        //printf("HTTP/1.0 200 OK\nContent-Type:\n");
 
         /*mime handling.....................*/
         //int consecutive_dots = ".."; //for future use
@@ -417,12 +442,12 @@ void file_open_attempt(char *final_file_path, int newsockfd, char *buffer)
         /* walk through other tokens */
         while (token != NULL)
         {
-            printf(" token= %s\n", token);
+            //printf(" token= %s\n", token);
             final_token = token;
             token = strtok(NULL, stopper);
         }
-        printf("req file path, token = %s , %s\n", req_file_path, final_token);
-        printf("final token=%s\n", final_token);
+        //printf("req file path, token = %s , %s\n", req_file_path, final_token);
+        //printf("final token=%s\n", final_token);
 
         print_response_header(final_token, newsockfd);
 
@@ -439,6 +464,7 @@ void file_open_attempt(char *final_file_path, int newsockfd, char *buffer)
         close(newsockfd);
     }
 }
+
 
 /*central connection handler*/
 void *connection_handler(void *input)
